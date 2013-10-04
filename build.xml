@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="WPKitchen" default="dist">
+    <target name="prod">
+        <echo msg="Removing directory /tmp/build (if exists)" />
+        <delete dir="/tmp/build" />
+        <echo msg="Making directory /tmp/build" />
+        <mkdir dir="/tmp/build" />
+        <echo msg="Copying files to build directory..." />
+        <copy todir="/tmp/build">
+            <fileset dir="." >
+                <exclude name="build.xml"/>
+                <include name="**" />
+            </fileset>
+        </copy>
+
+        <echo msg="Configuring wp-config.php" />
+        <reflexive>
+            <fileset dir="/tmp/build">
+                <include pattern="wp-config.php" />
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="'DB_NAME', 'wpkitchen'" replace="'DB_NAME', 'wpkitchenprod'"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+
+        <exec command="mysqldump --quick --password=1 --user=root wpkitchen > /tmp/build/dump.sql" escape="false" />
+        <echo message="Database dumped" />
+
+        <echo msg="Uploading to FTP" />
+        <ftpdeploy
+            host="localhost"
+            username="kuzma"
+            password="Q29nYCeLhd"
+            dir="/home/kuzma/workspace/wpkitchen/prod"
+            passive="true">
+            <fileset dir="/tmp/build">
+                <include name="**"/>
+            </fileset>
+        </ftpdeploy>
+
+        <http-request url="http://wpkitchen.prod/undump.php">
+            <config name="follow_redirects" value="true"/>
+        </http-request>
+
+    </target>
+    <target name="dev">
+        <echo msg="To be implemented..." />
+    </target>
+</project>
