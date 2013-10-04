@@ -1,0 +1,19 @@
+set tags=.tags
+let g:easytags_dynamic_files = 2
+
+filetype plugin on
+au FileType php set omnifunc=phpcomplete#CompletePHP
+
+if has("autocmd")
+autocmd BufEnter *.phtml set syn=php
+endif
+
+" Vdebug port change to prevent conflicts with php-fpm. Also disable break on
+" open
+" let g:vdebug_options = { "break_on_open" : 0, "port" : 9000 }
+
+" PHPQA
+let g:phpqa_messdetector_autorun = 0
+let g:phpqa_codesniffer_autorun = 0
+
+
