@@ -29,6 +29,18 @@
         <exec command="mysqldump --quick --password=1 --user=root wpkitchen > /tmp/build/dump.sql" escape="false" />
         <echo message="Database dumped" />
 
+        <echo msg="Replacing urls" />
+        <reflexive>
+            <fileset dir="/tmp/build">
+                <include pattern="dump.sql" />
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="http://wpkitchen.local" replace="http://wpkitchen.prod"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+
         <echo msg="Uploading to FTP" />
         <ftpdeploy
             host="localhost"
